@@ -1,0 +1,2 @@
+Start server: cd api && npm start
+Start application: cd frontend && yarn start
