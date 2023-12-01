@@ -40,7 +40,11 @@ function Home(props) {
   return (
     <Content style={{ margin: '24px 16px 0' }}>
       <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-        <Table columns={columns} dataSource={props.data} style={{marginBottom: 20}}/>
+        <Table 
+          columns={columns} 
+          dataSource={props.data} 
+          style={{marginBottom: 20}}
+        />
         {error && <Alert message={error} type="error" showIcon style={{marginBottom: 20}} />}
         <Form
           {...layout}

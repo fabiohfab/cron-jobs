@@ -5,11 +5,12 @@ import { useParams  , useHistory } from 'react-router-dom'
 import cronstrue from 'cronstrue';
 import { getCrons, columns } from '../../services/helpers'
 import { ImportOutlined, PauseOutlined, CaretRightOutlined, DownloadOutlined, DeleteOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 const { Content } = Layout;
 
 function Cron() {
-  const [cron, setCron] = useState([])
+  const [cron, setCron] = useState(null)
   const [fields, setFields] = useState([])
   const [data, setData] = useState([])
   const [error, setError] = useState(null)
@@ -25,34 +26,34 @@ function Cron() {
           "name": [
             "uri"
           ],
-          "value": response.data[0][id].uri
+          "value": response.data.uri
         },
         {
           "name": [
             "httpMethod"
           ],
-          "value": response.data[0][id].httpMethod
+          "value": response.data.httpMethod
         },
         {
           "name": [
             "body"
           ],
-          "value": response.data[0][id].body
+          "value": response.data.body
         },
         {
           "name": [
             "schedule"
           ],
-          "value": response.data[0][id].schedule
+          "value": response.data.schedule
         },
         {
           "name": [
             "timeZone"
           ],
-          "value": response.data[0][id].timeZone
+          "value": response.data.timeZone
         }
       ])
-      setCron(response.data[0])
+      setCron(response.data)
     }).catch(error => {
       setError(error.response.data.error)
     })
@@ -65,18 +66,18 @@ function Cron() {
   useEffect(() => {
     let temp_data = []
     if(cron) {
-      Object.keys(cron).map((c, i) => {
-        temp_data.push({
-          key: 0,
-          uri: cron[c]['uri'],
-          method: cron[c]['httpMethod'],
-          message: cron[c]['body'],
-          timezone: cron[c]['timeZone'],
-          id: c,
-          last_execution: cron[c]['lastExecution'],
-          schedule: cronstrue.toString(cron[c]['schedule']),
-          running: [cron[c]['running']]
-        })
+      temp_data.push({
+        key: 0,
+        uri: cron['uri'],
+        method: cron['httpMethod'],
+        message: cron['body'],
+        timezone: cron['timeZone'],
+        id: cron['id'],
+        last_execution: moment(cron['last_execution']).format('D/MM/YYYY H:m'),
+        schedule: cronstrue.toString(cron['schedule']),
+        errors: cron['errors'],
+        executions: cron['executions'],
+        running: cron['running']
       })
       
       setData(temp_data)
@@ -121,7 +122,7 @@ function Cron() {
   }
 
   const onChangeStatus = () => {
-    api.post("/cron/"+id).then(response => {
+    api.put("/cron/"+id+"/status").then(response => {
       setError(null)
       getCron()
       getCrons()
@@ -207,7 +208,7 @@ function Cron() {
               <Button type="primary" htmlType="submit">
               <ImportOutlined /> Update cron
               </Button>
-              {cron && cron[id] && <Button type="primary" onClick={onChangeStatus}>{cron[id]?.running ? (<><PauseOutlined /> Pause</>) : <><CaretRightOutlined /> Resume</>}</Button>}
+              {cron && <Button type="primary" onClick={onChangeStatus}>{cron?.running ? (<><PauseOutlined /> Pause</>) : <><CaretRightOutlined /> Resume</>}</Button>}
               <Button type="primary" onClick={onDownload}><DownloadOutlined /> Download logs file</Button>
               <Button type="primary" danger onClick={onDelete}><DeleteOutlined /> Delete cron</Button>
             </Space>

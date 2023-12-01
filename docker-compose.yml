@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: frontend
+    container_name: '${APP_NAME}-WebApp'
+    networks:
+      - project
+    env_file:
+      - .env
+    ports:
+      - '${WEB_APP_PORT}:8000'
+    volumes:
+      - ./frontend:/var/www/app
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: api
+    container_name: '${APP_NAME}-API'
+    networks:
+      - project
+    env_file:
+      - .env
+    ports:
+      - '${API_PORT}:3000'
+    volumes:
+      - ./api:/var/www/api
+  mongodb:
+    image: mongo:7.0
+    container_name: '${APP_NAME}-Database'
+    networks:
+      - project
+    ports:
+      - '${DB_PORT}:27017'
+    volumes:
+      - ./database:/data/db
+
+networks:
+  project:
+    name: '${APP_NAME}'

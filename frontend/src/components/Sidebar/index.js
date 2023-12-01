@@ -8,7 +8,6 @@ const { Sider } = Layout;
 const { Title } = Typography;
 
 function Sidebar(props) {
-
   return (
     <Sider
       breakpoint="lg"
@@ -29,8 +28,8 @@ function Sidebar(props) {
         {props.crons && Object.keys(props.crons).map((cron, index) => {
           return (
             <Menu.Item key={index} icon={<ClusterOutlined />}>
-              <Link to={{pathname: '/cron/'+cron}}>
-                {cron}
+              <Link to={{pathname: '/cron/'+props.crons[cron].id}}>
+                {props.crons[cron].id}
               </Link>
             </Menu.Item>
           )

@@ -6,13 +6,16 @@ import { Layout } from 'antd';
 import { getCrons } from './services/helpers'
 import cronstrue from 'cronstrue';
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
+import { Typography } from 'antd';
+import moment from 'moment';
 
-
+const { Title } = Typography;
 const { Header } = Layout;
 
 
@@ -32,10 +35,12 @@ function App() {
           method: crons[cron]['httpMethod'],
           timezone: crons[cron]['timeZone'],
           message: crons[cron]['body'],
-          id: cron,
-          last_execution: crons[cron]['lastExecution'],
+          id: crons[cron]['id'],
+          last_execution: moment(crons[cron]['last_execution']).format('D/MM/YYYY H:m'),
+          executions: crons[cron]['executions'],
+          errors: crons[cron]['errors'],
           schedule: cronstrue.toString(crons[cron]['schedule']),
-          running: [crons[cron]['running']]
+          running: crons[cron]['running']
         })
       })
     }
@@ -46,10 +51,16 @@ function App() {
   return (
     <Router>
       <Layout style={{minHeight: '100vh'}}>
-        <Sidebar crons={crons} />
+        {/* <Sidebar crons={crons} /> */}
         <Layout>
-          <Header className="site-layout-sub-header-background" style={{ padding: 0 }} />
-          
+          <Header className="site-layout-sub-header-background" style={{ padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Link to={{pathname: '/'}}>
+              <Title level={3} style={{color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0}}>
+                Cron Jobs
+              </Title>
+            </Link>
+          </Header>
+       
             <div>
               <Switch>
                 <Route path="/cron/:id">

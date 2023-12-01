@@ -6,7 +6,7 @@ import { Tag } from 'antd'
 
 function getCrons() {
   api.get("/cron").then(response => {
-    store.dispatch({ type: 'SET_CRONS', crons: response.data[0]})
+    store.dispatch({ type: 'SET_CRONS', crons: response.data})
   }).catch(error => {
     return false
   })
@@ -14,7 +14,7 @@ function getCrons() {
 
 const columns = [
   {
-    title: 'id',
+    title: '#',
     dataIndex: 'id',
     key: 'id',
     render: text => (
@@ -54,6 +54,18 @@ const columns = [
     render: text => <div>{text}</div>,
   },
   {
+    title: 'Executions',
+    dataIndex: 'executions',
+    key: 'executions',
+    render: text => <div>{text}</div>,
+  },
+  {
+    title: 'Errors',
+    dataIndex: 'errors',
+    key: 'errors',
+    render: text => <div>{text}</div>,
+  },
+  {
     title: 'Schedule',
     dataIndex: 'schedule',
     key: 'schedule',
@@ -63,21 +75,17 @@ const columns = [
     title: 'Running',
     key: 'running',
     dataIndex: 'running',
-    render: tags => (
-      <>
-        {tags.map(tag => {
-          let color = 'red';
-          if (tag) {
-            color = 'green';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag ? 'Running' : 'Paused'}
-            </Tag>
-          );
-        })}
-      </>
-    ),
+    render: running => {
+      let color = 'red';
+      if (running) {
+        color = 'green';
+      }
+      return (
+        <Tag color={color}>
+          {running ? 'Running' : 'Paused'}
+        </Tag>
+      )
+    },
   },
 ]
 
